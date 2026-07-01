@@ -2,7 +2,7 @@
   # Build the frontend folder only (monorepo)
   base = "frontend"
   command = "npm run build"
-  publish = "frontend/dist"
+  publish = "dist"
 
 [context.production.environment]
   # Set this in Netlify UI as a secure environment variable
