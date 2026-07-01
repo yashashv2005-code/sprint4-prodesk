@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 export default function ResumeUpload({ onExtract, disabled }) {
   const inputRef = useRef(null);
@@ -23,7 +23,7 @@ export default function ResumeUpload({ onExtract, disabled }) {
       const formData = new FormData();
       formData.append('resume', file);
 
-      const res = await axios.post('/extract-resume', formData, {
+      const res = await api.post('/extract-resume', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 

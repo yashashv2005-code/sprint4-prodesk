@@ -1,0 +1,12 @@
+[build]
+  # Build the frontend folder only (monorepo)
+  base = "frontend"
+  command = "npm run build"
+  publish = "frontend/dist"
+
+[context.production.environment]
+  # Set this in Netlify UI as a secure environment variable
+  # VITE_API_URL = "https://your-backend.example.com"
+
+[context.production]
+  command = "npm run build"

@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import api from './api';
 import Form from './components/Form.jsx';
 import CoverLetter from './components/CoverLetter.jsx';
 import Loading from './components/Loading.jsx';
@@ -15,7 +15,10 @@ function clampWords(text) {
 }
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const mainRef = useRef(null);
+  const aiRef = useRef(null);
+  const aboutRef = useRef(null);
+  const pricingRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -39,14 +42,9 @@ export default function App() {
   const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem('clg_dark_mode');
-    if (stored === '1') setDarkMode(true);
+    // Force dark theme only
+    document.documentElement.dataset.theme = 'dark';
   }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem('clg_dark_mode', darkMode ? '1' : '0');
-    document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
-  }, [darkMode]);
 
   useEffect(() => {
     if (!toast) return;
@@ -82,7 +80,7 @@ export default function App() {
         `${form.name}`;
 
       try {
-        const res = await axios.post('/generate', payload);
+        const res = await api.post('/generate', payload);
         const aiText = res.data?.coverLetter;
         if (aiText && typeof aiText === 'string' && aiText.trim()) {
           setCoverLetter(aiText.trim());
@@ -166,27 +164,107 @@ export default function App() {
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <div className="logo" />
+          <img src="/logo.png" alt="YOUR NOTICE" className="brandLogoImg" />
           <div>
-            <div className="brandTitle">CoverLetter AI</div>
+            <div className="brandTitle">YOUR NOTICE</div>
             <div className="brandSubtitle">ATS-friendly cover letters</div>
           </div>
         </div>
 
-        <div className="topbarActions">
+        <nav className="topNav">
+          <a onClick={() => aiRef.current?.scrollIntoView({ behavior: 'smooth' })}>AI Solutions</a>
+          <a onClick={() => aboutRef.current?.scrollIntoView({ behavior: 'smooth' })}>About</a>
+          <a onClick={() => pricingRef.current?.scrollIntoView({ behavior: 'smooth' })}>Pricing</a>
           <button
-            className="iconBtn"
-            onClick={() => setDarkMode((v) => !v)}
-            aria-label="Toggle dark mode"
+            className="btn btnPrimary navCta"
             type="button"
+            onClick={() => mainRef.current?.scrollIntoView({ behavior: 'smooth' })}
           >
-            {darkMode ? '🌙 Dark' : '☀️ Light'}
-
+            Get Started
           </button>
-        </div>
+        </nav>
       </header>
 
-      <main className="container">
+      <section className="hero">
+        <div className="heroInner">
+          <div className="heroBadge">Beta Version</div>
+          <h1 className="heroTitle">Next-gen cover letters
+            <br />that get noticed</h1>
+          <p className="heroSubtitle">Generate ATS-friendly, personalized cover letters in seconds using AI.</p>
+          <div className="heroActions">
+            <button className="btn btnPrimary heroCta" onClick={() => mainRef.current?.scrollIntoView({ behavior: 'smooth' })}>Get Started</button>
+          </div>
+        </div>
+      </section>
+
+      <section ref={aiRef} className="section sectionSolutions">
+        <div className="containerInner">
+          <h2 className="sectionTitle">AI Solutions</h2>
+          <p className="sectionLead">Smart templates and personalization powered by AI to tailor cover letters quickly and accurately. We focus on extracting the most relevant achievements from your resume and presenting them in a role-specific, ATS-friendly format.</p>
+
+          <div className="solutionsGrid">
+            <div className="solutionCard">
+              <h3>Personalization</h3>
+              <p>Use resume parsing to surface project highlights, metrics, and keywords so every letter reads as if written for the role.</p>
+            </div>
+            <div className="solutionCard">
+              <h3>ATS Optimization</h3>
+              <p>Structure and phrasing are optimized for applicant tracking systems to improve the odds of passing automated screening.</p>
+            </div>
+            <div className="solutionCard">
+              <h3>Tone & Style</h3>
+              <p>Choose the voice that fits your application—formal, conversational, or achievement-driven—and adjust length and emphasis.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section ref={aboutRef} className="section sectionAbout">
+        <div className="containerInner">
+          <h2 className="sectionTitle">About</h2>
+          <p className="sectionLead">Your Notice was created to simplify job applications. We blend prompt-engineered AI and smart resume extraction to generate letters that are concise, relevant, and tailored to hiring managers. Our mission is to help candidates present their best, most relevant selves in fewer minutes.</p>
+          <p style={{textAlign: 'center', color: 'var(--muted)', maxWidth: 860, margin: '12px auto 0'}}>Founded by recruiters and engineers, we iterate on feedback from real hiring teams to ensure letters highlight the right mix of impact and fit.</p>
+        </div>
+      </section>
+
+      <section ref={pricingRef} className="section sectionPricing">
+        <div className="containerInner">
+          <h2 className="sectionTitle">Pricing</h2>
+          <p className="sectionLead">Transparent pricing that scales with your needs—try for free, upgrade for more features, or contact us for enterprise plans.</p>
+
+          <div className="pricingGrid">
+            <div className="priceCard">
+              <div className="priceHeader">Free</div>
+              <div className="priceAmount">$0</div>
+              <ul>
+                <li>Access to basic templates</li>
+                <li>5 free generations per month</li>
+                <li>Basic download & copy features</li>
+              </ul>
+            </div>
+            <div className="priceCard">
+              <div className="priceHeader">Pro</div>
+              <div className="priceAmount">$9 / mo</div>
+              <ul>
+                <li>Unlimited generations</li>
+                <li>Resume personalization and extraction</li>
+                <li>Priority support and PDF downloads</li>
+              </ul>
+            </div>
+            <div className="priceCard">
+              <div className="priceHeader">Team</div>
+              <div className="priceAmount">Contact</div>
+              <ul>
+                <li>Multi-seat management</li>
+                <li>Centralized billing</li>
+                <li>Dedicated support</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <main ref={mainRef} className="container">
         <div className="grid">
           <section className="panel panelGlass">
             <h2 className="panelTitle">Generate a cover letter</h2>

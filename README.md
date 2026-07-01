@@ -96,6 +96,31 @@ npm run dev
 
 Frontend runs on `http://localhost:5173` by default.
 
+## Deploying to Netlify (recommended)
+
+1. Push your changes to GitHub (branch `main` or a PR branch):
+
+```bash
+git add .
+git commit -m "UI: hero, sections, styles, netlify config"
+git push origin main
+```
+
+2. Create a site on Netlify and connect your GitHub repository.
+
+3. In Netlify site settings:
+  - Set **Base directory** to `frontend`.
+  - Set **Build command** to `npm run build`.
+  - Set **Publish directory** to `dist` (Netlify will resolve to `frontend/dist`).
+  - Add environment variable `VITE_API_URL` pointing to your backend URL (e.g. `https://api.yourdomain.com`).
+
+4. Deploy. Netlify will build the frontend and publish the site.
+
+Notes:
+- The backend must be deployed separately (Render, Railway, Heroku, etc.) and have `GEMINI_API_KEY` configured.
+- The frontend uses `VITE_API_URL` to call the backend in production. If not set, the frontend will assume same origin.
+
+
 ## API Request
 
 `POST /generate`

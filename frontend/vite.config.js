@@ -11,6 +11,12 @@ export default defineConfig({
         target: 'http://localhost:4000',
         changeOrigin: true
       }
+      ,
+      // Also proxy resume extraction endpoint used by frontend
+      '/extract-resume': {
+        target: 'http://localhost:4000',
+        changeOrigin: true
+      }
     }
   }
 });
